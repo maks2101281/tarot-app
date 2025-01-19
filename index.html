@@ -160,13 +160,26 @@
 
             // Обработка выбора карт
             const selectedCards = [];
-            document.querySelectorAll('.card').forEach(card => {
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
                 card.addEventListener('click', () => {
                     if (!card.classList.contains('flipped') && selectedCards.length < 3) {
                         card.classList.add('flipped');
                         selectedCards.push(card.dataset.cardName); // Добавляем выбранную карту
 
                         if (selectedCards.length === 3) {
+                            // Скрываем оставшиеся карты
+                            cards.forEach(c => {
+                                if (!c.classList.contains('flipped')) {
+                                    c.classList.add('hidden');
+                                }
+                            });
+
+                            // Выравниваем выбранные карты по центру
+                            const cardContainer = document.getElementById('cardContainer');
+                            cardContainer.style.justifyContent = 'center';
+
                             sendDataToBot({ cards: selectedCards }); // Отправляем данные в бота
                         }
                     }
