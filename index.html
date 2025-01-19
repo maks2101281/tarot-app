@@ -36,7 +36,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap; /* Устанавливаем в один ряд */
+            overflow-x: auto; /* Добавляем прокрутку по оси X */
             margin: 20px 0;
             width: 90%; /* Ширина контейнера для мобильных устройств */
             transition: all 0.5s ease;
@@ -45,11 +46,11 @@
         .card {
             width: 100px;
             height: 150px;
-            margin: 10px;
+            margin: 5px; /* Уменьшены отступы для лучшего отображения на мобильных */
             perspective: 1000px;
             cursor: pointer;
             transition: opacity 0.5s, transform 0.5s;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Карты не сжимаются */
         }
 
         .card.hidden {
@@ -106,7 +107,6 @@
     <h1>Таролог | Расклады Таро</h1>
     <p>Выберите 3 карты</p>
     <div class="card-container" id="cardContainer">
-        <!-- 7 карт для выбора -->
         <div class="card" data-card-name="Карта 1">
             <div class="card-inner">
                 <div class="card-front" style="background-image: url('card1.jpg');"></div>
@@ -176,7 +176,6 @@
 
                         // Выравнивание выбранных карт по центру
                         cardContainer.style.justifyContent = 'center';
-                        cardContainer.style.flexDirection = 'row';
 
                         tg.sendData(JSON.stringify({ cards: selectedCards }));
                     }
