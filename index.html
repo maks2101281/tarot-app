@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор карт Таро</title>
     <style>
-        /* Основные стили */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,10 +14,10 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-image: url('background.jpg'); /* Фоновое изображение */
+            background-image: url('background.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* Фиксированный фон */
+            background-attachment: fixed;
             color: #fff;
         }
 
@@ -33,18 +32,16 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        /* Контейнер для карт */
         .card-container {
             display: flex;
-            justify-content: center; /* Карты по центру */
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap; /* Карты в несколько строк */
+            flex-wrap: wrap;
             margin: 20px 0;
-            width: 100%;
+            width: 90%; /* Ширина контейнера для мобильных устройств */
             transition: all 0.5s ease;
         }
 
-        /* Стили для карт */
         .card {
             width: 100px;
             height: 150px;
@@ -52,13 +49,13 @@
             perspective: 1000px;
             cursor: pointer;
             transition: opacity 0.5s, transform 0.5s;
-            flex-shrink: 0; /* Карты не сжимаются */
+            flex-shrink: 0;
         }
 
         .card.hidden {
             opacity: 0;
             transform: scale(0);
-            pointer-events: none; /* Отключаем клики по скрытым картам */
+            pointer-events: none;
         }
 
         .card-inner {
@@ -92,16 +89,15 @@
         }
 
         .card-back {
-            background-image: url('card-back.jpg'); /* Рубашка карты */
+            background-image: url('card-back.jpg');
             background-size: cover;
         }
 
-        /* Адаптивные стили для мобильных устройств */
         @media (max-width: 600px) {
             .card {
-                width: 80px; /* Уменьшаем ширину карт для мобильных устройств */
-                height: 120px; /* Уменьшаем высоту карт для мобильных устройств */
-                margin: 5px; /* Уменьшаем отступы */
+                width: 80px;
+                height: 120px;
+                margin: 5px;
             }
         }
     </style>
@@ -110,7 +106,7 @@
     <h1>Таролог | Расклады Таро</h1>
     <p>Выберите 3 карты</p>
     <div class="card-container" id="cardContainer">
-        <!-- Карты будут добавлены сюда -->
+        <!-- 7 карт для выбора -->
         <div class="card" data-card-name="Карта 1">
             <div class="card-inner">
                 <div class="card-front" style="background-image: url('card1.jpg');"></div>
@@ -153,57 +149,35 @@
                 <div class="card-back"></div>
             </div>
         </div>
-        <div class="card" data-card-name="Карта 8">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card8.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 9">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card9.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 10">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card10.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
 
-        // Инициализация Web App
         tg.ready();
-        tg.expand(); // Развернуть Web App на весь экран
+        tg.expand();
 
-        // Обработка выбора карт
         const selectedCards = [];
         const cardContainer = document.getElementById('cardContainer');
 
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
                 if (!card.classList.contains('flipped') && selectedCards.length < 3) {
-                    card.classList.add('flipped'); // Переворачиваем карту
-                    selectedCards.push(card.dataset.cardName); // Добавляем выбранную карту
+                    card.classList.add('flipped');
+                    selectedCards.push(card.dataset.cardName);
 
                     if (selectedCards.length === 3) {
-                        // Скрываем остальные карты
                         document.querySelectorAll('.card').forEach(otherCard => {
                             if (!otherCard.classList.contains('flipped')) {
                                 otherCard.classList.add('hidden');
                             }
                         });
 
-                        // Центрируем выбранные карты
+                        // Выравнивание выбранных карт по центру
                         cardContainer.style.justifyContent = 'center';
+                        cardContainer.style.flexDirection = 'row';
 
-                        // Отправляем данные в Telegram-бота
                         tg.sendData(JSON.stringify({ cards: selectedCards }));
                     }
                 }
