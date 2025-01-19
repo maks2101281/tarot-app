@@ -36,12 +36,11 @@
         /* Контейнер для карт */
         .card-container {
             display: flex;
-            justify-content: center; /* Карты по центру */
+            justify-content: center;
             align-items: center;
-            flex-wrap: nowrap; /* Карты в одну строку */
+            flex-wrap: wrap; /* Карты могут переноситься на новую строку */
             margin: 20px 0;
             width: 100%;
-            overflow-x: auto; /* Прокрутка, если карты не помещаются */
             transition: justify-content 0.5s;
         }
 
@@ -53,7 +52,7 @@
             perspective: 1000px;
             cursor: pointer;
             transition: opacity 0.5s, transform 0.5s;
-            flex-shrink: 0; /* Карты не сжимаются */
+            flex-shrink: 0;
         }
 
         .card.hidden {
@@ -155,51 +154,85 @@
         </div>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Проверяем, загрузился ли Telegram Web App API
-        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-            const tg = Telegram.WebApp;
+        // Сбор данных о устройстве пользователя
+        function getUserDeviceInfo() {
+            return {
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                devicePixelRatio: window.devicePixelRatio,
+                userAgent: navigator.userAgent,
+            };
+        }
 
-            // Инициализация Web App
-            tg.ready();
-            tg.expand(); // Развернуть Web App на весь экран
+        // Функция для улучшения выравнивания карт
+        function alignCards() {
+            const cardContainer = document.getElementById('cardContainer');
+            const cards = document.querySelectorAll('.card:not(.hidden)');
+            const containerWidth = cardContainer.offsetWidth;
+            const cardWidth = cards[0]?.offsetWidth || 100; // Ширина одной карты
+            const margin = 10; // Отступ между картами
+            const totalCardsWidth = cards.length * (cardWidth + margin * 2);
 
-            // Пример отправки данных в бота
-            function sendDataToBot(data) {
-                tg.sendData(JSON.stringify(data)); // Отправляем данные в бота
+            // Получаем данные о устройстве пользователя
+            const deviceInfo = getUserDeviceInfo();
+
+            // Логируем данные для отладки
+            console.log('Данные о устройстве:', deviceInfo);
+
+            // Адаптация выравнивания в зависимости от ширины экрана
+            if (totalCardsWidth > containerWidth) {
+                cardContainer.style.justifyContent = 'flex-start';
+            } else {
+                cardContainer.style.justifyContent = 'center';
             }
 
-            // Обработка выбора карт
-            const selectedCards = [];
-            const cards = document.querySelectorAll('.card');
-
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    if (!card.classList.contains('flipped') && selectedCards.length < 3) {
-                        card.classList.add('flipped');
-                        selectedCards.push(card.dataset.cardName); // Добавляем выбранную карту
-
-                        if (selectedCards.length === 3) {
-                            // Скрываем оставшиеся карты
-                            cards.forEach(c => {
-                                if (!c.classList.contains('flipped')) {
-                                    c.classList.add('hidden');
-                                }
-                            });
-
-                            // Выравниваем выбранные карты по центру
-                            const cardContainer = document.getElementById('cardContainer');
-                            cardContainer.style.justifyContent = 'center';
-
-                            sendDataToBot({ cards: selectedCards }); // Отправляем данные в бота
-                        }
-                    }
+            // Дополнительная адаптация для мобильных устройств
+            if (deviceInfo.windowWidth <= 600) {
+                cards.forEach(card => {
+                    card.style.width = '80px';
+                    card.style.height = '120px';
+                    card.style.margin = '5px';
                 });
-            });
-        } else {
-            console.error("Telegram Web App API не загружен.");
+            } else {
+                cards.forEach(card => {
+                    card.style.width = '100px';
+                    card.style.height = '150px';
+                    card.style.margin = '10px';
+                });
+            }
         }
+
+        // Обработка выбора карт
+        const selectedCards = [];
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (!card.classList.contains('flipped') && selectedCards.length < 3) {
+                    card.classList.add('flipped');
+                    selectedCards.push(card.dataset.cardName); // Добавляем выбранную карту
+
+                    if (selectedCards.length === 3) {
+                        // Скрываем оставшиеся карты
+                        cards.forEach(c => {
+                            if (!c.classList.contains('flipped')) {
+                                c.classList.add('hidden');
+                            }
+                        });
+
+                        // Выравниваем выбранные карты
+                        alignCards();
+                    }
+                }
+            });
+        });
+
+        // Выравнивание карт при загрузке и изменении размера окна
+        window.addEventListener('load', alignCards);
+        window.addEventListener('resize', alignCards);
     </script>
 </body>
 </html>
