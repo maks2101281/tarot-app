@@ -207,7 +207,7 @@
 
                         // Центрируем выбранные карты
                         cardContainer.style.justifyContent = 'center';
-                        cardContainer.style.gap = '10px'; // Расстояние между картами
+                        cardContainer.style.gap = '0'; // Убираем пробелы между картами
 
                         // Отправка данных в Telegram
                         tg.sendData(JSON.stringify({ cards: selectedCards }));
