@@ -18,12 +18,12 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 0; /* Убрали отступы */
+            padding: 0;
             box-sizing: border-box;
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон для контраста */
+            background: rgba(0, 0, 0, 0.5);
             padding: 20px;
             border-radius: 10px;
             text-align: center;
@@ -35,7 +35,7 @@
         h1 {
             color: white;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            font-size: 2rem; /* Адаптивный размер шрифта */
+            font-size: 2rem;
             margin-bottom: 20px;
         }
 
@@ -43,20 +43,20 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0; /* Убрали пробелы между картами */
+            gap: 2px; /* Уменьшенный зазор между картами */
         }
 
         .card {
-            width: 80px; /* Начальная ширина карт */
-            height: 120px; /* Начальная высота карт */
+            width: 80px;
+            height: 120px;
             background-image: url('card-back.jpg');
             background-size: cover;
             background-position: center;
-            border: none; /* Убрали белую рамку */
+            border: none;
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.5s ease, background-image 0.5s ease;
-            margin: 0; /* Убрали отступы */
+            margin: 0;
         }
 
         .card.selected {
@@ -96,19 +96,19 @@
         .selected-cards {
             display: flex;
             justify-content: center;
-            gap: 0; /* Убрали пробелы между выбранными картами */
+            gap: 2px; /* Уменьшенный зазор между выбранными картами */
             margin-top: 20px;
         }
 
         /* Адаптивные стили для мобильных устройств */
         @media (max-width: 600px) {
             h1 {
-                font-size: 1.5rem; /* Уменьшаем размер шрифта на мобильных устройствах */
+                font-size: 1.5rem;
             }
 
             .card {
-                width: 70px; /* Уменьшаем ширину карт на мобильных устройствах */
-                height: 100px; /* Уменьшаем высоту карт на мобильных устройствах */
+                width: 70px;
+                height: 100px;
             }
         }
     </style>
@@ -137,7 +137,7 @@
         function adjustCardSize() {
             const containerWidth = document.querySelector('.container').clientWidth;
             const cardWidth = 80; // Начальная ширина карты
-            const gap = 0; // Расстояние между картами
+            const gap = 2; // Расстояние между картами
             const maxCardsPerRow = Math.floor(containerWidth / (cardWidth + gap));
 
             if (maxCardsPerRow < 7) {
@@ -169,8 +169,12 @@
                     if (selectedCards.length === 3) {
                         hideUnselectedCards();
                         // Отправляем данные в Telegram и закрываем приложение
-                        Telegram.WebApp.sendData(selectedCards.join(','));
-                        Telegram.WebApp.close(); // Закрываем веб-приложение
+                        if (window.Telegram && Telegram.WebApp) {
+                            Telegram.WebApp.sendData(selectedCards.join(','));
+                            Telegram.WebApp.close(); // Закрываем веб-приложение
+                        } else {
+                            console.error('Telegram WebApp is not available.');
+                        }
                     }
                 }
             });
@@ -182,7 +186,7 @@
             selectedCards.forEach(cardName => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'card selected';
-                cardElement.style.backgroundImage = `url('${cardName}.jpg')`;
+                cardElement.style.backgroundImage = `url('card${cardName}.jpg')`;
                 selectedCardsContainer.appendChild(cardElement);
             });
         }
