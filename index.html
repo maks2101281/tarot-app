@@ -6,81 +6,108 @@
     <title>Выбор карт Таро</title>
     <link rel="manifest" href="/manifest.json">
     <style>
+        /* Общие стили */
         body {
             font-family: Arial, sans-serif;
             background-image: url('background.jpg');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
         .container {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон для контраста */
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
         }
+
+        h1 {
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 2rem; /* Адаптивный размер шрифта */
+            margin-bottom: 20px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            justify-content: center;
+        }
+
         .card {
-            display: inline-block;
-            margin: 10px;
-            width: 100px;
+            width: 100%;
             height: 150px;
             background-image: url('card-back.jpg');
             background-size: cover;
             background-position: center;
-            border: 2px solid #ccc;
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.5s ease, background-image 0.5s ease;
         }
+
         .card.selected {
-            border-color: #007bff;
-            transform: scale(1.1);
+            background-image: url('');
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: rotateY(180deg);
         }
-        .card[data-card="1"] {
+
+        .card[data-card="1"].selected {
             background-image: url('card1.jpg');
         }
-        .card[data-card="2"] {
+
+        .card[data-card="2"].selected {
             background-image: url('card2.jpg');
         }
-        .card[data-card="3"] {
+
+        .card[data-card="3"].selected {
             background-image: url('card3.jpg');
         }
-        .card[data-card="4"] {
+
+        .card[data-card="4"].selected {
             background-image: url('card4.jpg');
         }
-        .card[data-card="5"] {
+
+        .card[data-card="5"].selected {
             background-image: url('card5.jpg');
         }
-        .card[data-card="6"] {
+
+        .card[data-card="6"].selected {
             background-image: url('card6.jpg');
         }
-        .card[data-card="7"] {
+
+        .card[data-card="7"].selected {
             background-image: url('card7.jpg');
         }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+
+        /* Адаптивные стили для мобильных устройств */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem; /* Уменьшаем размер шрифта на мобильных устройствах */
+            }
+
+            .card {
+                height: 120px; /* Уменьшаем высоту карт на мобильных устройствах */
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Выберите карты Таро</h1>
-        <div id="cards">
+        <div class="cards-grid" id="cards">
             <div class="card" data-card="1"></div>
             <div class="card" data-card="2"></div>
             <div class="card" data-card="3"></div>
@@ -89,31 +116,25 @@
             <div class="card" data-card="6"></div>
             <div class="card" data-card="7"></div>
         </div>
-        <button id="submit" disabled>Отправить</button>
     </div>
 
     <script>
         const cards = document.querySelectorAll('.card');
-        const submitButton = document.getElementById('submit');
         const selectedCards = [];
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                card.classList.toggle('selected');
-                const cardName = card.getAttribute('data-card');
-                if (selectedCards.includes(cardName)) {
-                    selectedCards.splice(selectedCards.indexOf(cardName), 1);
-                } else {
+                if (!card.classList.contains('selected')) {
+                    card.classList.add('selected');
+                    const cardName = card.getAttribute('data-card');
                     selectedCards.push(cardName);
-                }
-                submitButton.disabled = selectedCards.length === 0;
-            });
-        });
 
-        submitButton.addEventListener('click', () => {
-            if (selectedCards.length > 0) {
-                Telegram.WebApp.sendData(selectedCards.join(','));
-            }
+                    // Автоматически отправляем данные после выбора карты
+                    if (selectedCards.length > 0) {
+                        Telegram.WebApp.sendData(selectedCards.join(','));
+                    }
+                }
+            });
         });
     </script>
 </body>
