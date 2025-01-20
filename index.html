@@ -41,14 +41,14 @@
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Уменьшил ширину карт */
             gap: 10px;
             justify-content: center;
         }
 
         .card {
-            width: 100%;
-            height: 150px;
+            width: 80px; /* Фиксированная ширина карт */
+            height: 120px; /* Фиксированная высота карт */
             background-image: url('card-back.jpg');
             background-size: cover;
             background-position: center;
@@ -92,6 +92,14 @@
             background-image: url('card7.jpg');
         }
 
+        /* Стили для выбранных карт */
+        .selected-cards {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         /* Адаптивные стили для мобильных устройств */
         @media (max-width: 600px) {
             h1 {
@@ -99,7 +107,8 @@
             }
 
             .card {
-                height: 120px; /* Уменьшаем высоту карт на мобильных устройствах */
+                width: 70px; /* Уменьшаем ширину карт на мобильных устройствах */
+                height: 100px; /* Уменьшаем высоту карт на мобильных устройствах */
             }
         }
     </style>
@@ -116,26 +125,53 @@
             <div class="card" data-card="6"></div>
             <div class="card" data-card="7"></div>
         </div>
+        <div class="selected-cards" id="selected-cards"></div>
     </div>
 
     <script>
         const cards = document.querySelectorAll('.card');
+        const selectedCardsContainer = document.getElementById('selected-cards');
         const selectedCards = [];
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                if (!card.classList.contains('selected')) {
+                if (!card.classList.contains('selected') && selectedCards.length < 3) {
                     card.classList.add('selected');
                     const cardName = card.getAttribute('data-card');
                     selectedCards.push(cardName);
 
-                    // Автоматически отправляем данные после выбора карты
-                    if (selectedCards.length > 0) {
+                    // Обновляем отображение выбранных карт
+                    updateSelectedCards();
+
+                    // Если выбрано 3 карты, скрываем остальные
+                    if (selectedCards.length === 3) {
+                        hideUnselectedCards();
+                        // Отправляем данные в Telegram
                         Telegram.WebApp.sendData(selectedCards.join(','));
                     }
                 }
             });
         });
+
+        // Обновление отображения выбранных карт
+        function updateSelectedCards() {
+            selectedCardsContainer.innerHTML = ''; // Очищаем контейнер
+            selectedCards.forEach(cardName => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card selected';
+                cardElement.style.backgroundImage = `url('${cardName}.jpg')`;
+                selectedCardsContainer.appendChild(cardElement);
+            });
+        }
+
+        // Скрытие невыбранных карт
+        function hideUnselectedCards() {
+            cards.forEach(card => {
+                if (!card.classList.contains('selected')) {
+                    card.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
