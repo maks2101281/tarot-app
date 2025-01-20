@@ -131,7 +131,7 @@
     <script>
         const cards = document.querySelectorAll('.card');
         const selectedCardsContainer = document.getElementById('selected-cards');
-        const selectedCards = [];
+        const selectedCards = new Set(); // Используем Set для предотвращения дублирования карт
 
         // Функция для уменьшения размера карт, если они не помещаются
         function adjustCardSize() {
@@ -155,22 +155,23 @@
         window.addEventListener('load', adjustCardSize);
         window.addEventListener('resize', adjustCardSize);
 
+        // Обработчик выбора карт
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                if (!card.classList.contains('selected') && selectedCards.length < 3) {
+                if (!card.classList.contains('selected') && selectedCards.size < 3) {
                     card.classList.add('selected');
                     const cardName = card.getAttribute('data-card');
-                    selectedCards.push(cardName);
+                    selectedCards.add(cardName); // Добавляем карту в Set
 
                     // Обновляем отображение выбранных карт
                     updateSelectedCards();
 
-                    // Если выбрано 3 карты, скрываем остальные и закрываем приложение
-                    if (selectedCards.length === 3) {
+                    // Если выбрано 3 карты, закрываем приложение
+                    if (selectedCards.size === 3) {
                         hideUnselectedCards();
                         // Отправляем данные в Telegram и закрываем приложение
                         if (window.Telegram && Telegram.WebApp) {
-                            Telegram.WebApp.sendData(selectedCards.join(','));
+                            Telegram.WebApp.sendData(Array.from(selectedCards).join(',')); // Преобразуем Set в массив
                             Telegram.WebApp.close(); // Закрываем веб-приложение
                         } else {
                             console.error('Telegram WebApp is not available.');
