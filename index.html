@@ -42,13 +42,13 @@
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Уменьшил ширину карт */
-            gap: 10px;
+            gap: 5px; /* Уменьшил расстояние между картами */
             justify-content: center;
         }
 
         .card {
-            width: 80px; /* Фиксированная ширина карт */
-            height: 120px; /* Фиксированная высота карт */
+            width: 80px; /* Начальная ширина карт */
+            height: 120px; /* Начальная высота карт */
             background-image: url('card-back.jpg');
             background-size: cover;
             background-position: center;
@@ -96,7 +96,7 @@
         .selected-cards {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 5px; /* Уменьшил расстояние между выбранными картами */
             margin-top: 20px;
         }
 
@@ -132,6 +132,28 @@
         const cards = document.querySelectorAll('.card');
         const selectedCardsContainer = document.getElementById('selected-cards');
         const selectedCards = [];
+
+        // Функция для уменьшения размера карт, если они не помещаются
+        function adjustCardSize() {
+            const containerWidth = document.querySelector('.container').clientWidth;
+            const cardWidth = 80; // Начальная ширина карты
+            const gap = 5; // Расстояние между картами
+            const maxCardsPerRow = Math.floor(containerWidth / (cardWidth + gap));
+
+            if (maxCardsPerRow < 7) {
+                const newCardWidth = (containerWidth - (maxCardsPerRow - 1) * gap) / maxCardsPerRow;
+                const newCardHeight = newCardWidth * 1.5; // Сохраняем пропорции
+
+                cards.forEach(card => {
+                    card.style.width = `${newCardWidth}px`;
+                    card.style.height = `${newCardHeight}px`;
+                });
+            }
+        }
+
+        // Вызываем функцию при загрузке страницы и изменении размера окна
+        window.addEventListener('load', adjustCardSize);
+        window.addEventListener('resize', adjustCardSize);
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
