@@ -4,73 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор карт Таро</title>
+    <link rel="manifest" href="/manifest.json">
     <style>
+        /* Общие стили */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
         .container {
-            background: white;
+            background: rgba(0, 0, 0, 0.5);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 400px;
+            max-width: 100%;
             width: 100%;
+            box-sizing: border-box;
         }
+
         h1 {
-            color: #333;
-            font-size: 1.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 2rem;
             margin-bottom: 20px;
         }
+
         .cards-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
+            gap: 2px; /* Уменьшенный зазор между картами */
         }
+
         .card {
             width: 80px;
             height: 120px;
-            background-color: #ddd;
+            background-image: url('card-back.jpg');
+            background-size: cover;
+            background-position: center;
+            border: none;
             border-radius: 10px;
             cursor: pointer;
+            transition: transform 0.5s ease, background-image 0.5s ease;
+            margin: 0;
+        }
+
+        .card.selected {
+            background-image: url('');
+            transform: rotateY(180deg);
+        }
+
+        .card[data-card="1"].selected {
+            background-image: url('card1.jpg');
+        }
+
+        .card[data-card="2"].selected {
+            background-image: url('card2.jpg');
+        }
+
+        .card[data-card="3"].selected {
+            background-image: url('card3.jpg');
+        }
+
+        .card[data-card="4"].selected {
+            background-image: url('card4.jpg');
+        }
+
+        .card[data-card="5"].selected {
+            background-image: url('card5.jpg');
+        }
+
+        .card[data-card="6"].selected {
+            background-image: url('card6.jpg');
+        }
+
+        .card[data-card="7"].selected {
+            background-image: url('card7.jpg');
+        }
+
+        /* Стили для выбранных карт */
+        .selected-cards {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
-            color: #333;
-        }
-        .card.selected {
-            background-color: #007bff;
-            color: white;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
+            gap: 2px; /* Уменьшенный зазор между выбранными картами */
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            resize: none;
         }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
+
+        /* Адаптивные стили для мобильных устройств */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                width: 70px;
+                height: 100px;
+            }
         }
     </style>
 </head>
@@ -78,54 +117,88 @@
     <div class="container">
         <h1>Выберите карты Таро</h1>
         <div class="cards-grid" id="cards">
-            <div class="card" data-card="1">1</div>
-            <div class="card" data-card="2">2</div>
-            <div class="card" data-card="3">3</div>
-            <div class="card" data-card="4">4</div>
-            <div class="card" data-card="5">5</div>
-            <div class="card" data-card="6">6</div>
-            <div class="card" data-card="7">7</div>
+            <div class="card" data-card="1"></div>
+            <div class="card" data-card="2"></div>
+            <div class="card" data-card="3"></div>
+            <div class="card" data-card="4"></div>
+            <div class="card" data-card="5"></div>
+            <div class="card" data-card="6"></div>
+            <div class="card" data-card="7"></div>
         </div>
-        <textarea id="question" placeholder="Введите ваш вопрос"></textarea>
-        <button id="submit">Отправить</button>
+        <div class="selected-cards" id="selected-cards"></div>
     </div>
 
     <script>
         const cards = document.querySelectorAll('.card');
-        const questionInput = document.getElementById('question');
-        const submitButton = document.getElementById('submit');
+        const selectedCardsContainer = document.getElementById('selected-cards');
         const selectedCards = [];
 
-        // Обработчик выбора карт
+        // Функция для уменьшения размера карт, если они не помещаются
+        function adjustCardSize() {
+            const containerWidth = document.querySelector('.container').clientWidth;
+            const cardWidth = 80; // Начальная ширина карты
+            const gap = 2; // Расстояние между картами
+            const maxCardsPerRow = Math.floor(containerWidth / (cardWidth + gap));
+
+            if (maxCardsPerRow < 7) {
+                const newCardWidth = (containerWidth - (maxCardsPerRow - 1) * gap) / maxCardsPerRow;
+                const newCardHeight = newCardWidth * 1.5; // Сохраняем пропорции
+
+                cards.forEach(card => {
+                    card.style.width = `${newCardWidth}px`;
+                    card.style.height = `${newCardHeight}px`;
+                });
+            }
+        }
+
+        // Вызываем функцию при загрузке страницы и изменении размера окна
+        window.addEventListener('load', adjustCardSize);
+        window.addEventListener('resize', adjustCardSize);
+
         cards.forEach(card => {
             card.addEventListener('click', () => {
                 if (!card.classList.contains('selected') && selectedCards.length < 3) {
                     card.classList.add('selected');
                     const cardName = card.getAttribute('data-card');
                     selectedCards.push(cardName);
+
+                    // Обновляем отображение выбранных карт
+                    updateSelectedCards();
+
+                    // Если выбрано 3 карты, скрываем остальные и закрываем приложение
+                    if (selectedCards.length === 3) {
+                        hideUnselectedCards();
+                        // Отправляем данные в Telegram и закрываем приложение
+                        if (window.Telegram && Telegram.WebApp) {
+                            Telegram.WebApp.sendData(selectedCards.join(','));
+                            Telegram.WebApp.close(); // Закрываем веб-приложение
+                        } else {
+                            console.error('Telegram WebApp is not available.');
+                        }
+                    }
                 }
             });
         });
 
-        // Отправка данных в бота
-        submitButton.addEventListener('click', async () => {
-            const question = questionInput.value.trim();
-            if (selectedCards.length === 3 && question) {
-                const data = {
-                    cards: selectedCards,
-                    question: question
-                };
+        // Обновление отображения выбранных карт
+        function updateSelectedCards() {
+            selectedCardsContainer.innerHTML = ''; // Очищаем контейнер
+            selectedCards.forEach(cardName => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card selected';
+                cardElement.style.backgroundImage = `url('card${cardName}.jpg')`;
+                selectedCardsContainer.appendChild(cardElement);
+            });
+        }
 
-                // Отправляем данные в бота через Telegram WebApp
-                if (window.Telegram && Telegram.WebApp) {
-                    Telegram.WebApp.sendData(JSON.stringify(data));
-                } else {
-                    console.log('Данные для отправки:', data);
+        // Скрытие невыбранных карт
+        function hideUnselectedCards() {
+            cards.forEach(card => {
+                if (!card.classList.contains('selected')) {
+                    card.style.display = 'none';
                 }
-            } else {
-                alert('Пожалуйста, выберите 3 карты и задайте вопрос.');
-            }
-        });
+            });
+        }
     </script>
 </body>
 </html>
