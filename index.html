@@ -131,6 +131,18 @@
                 padding-bottom: 37.5%; /* Соотношение сторон для Telegram */
             }
         }
+
+        /* Стили для выбранных карт */
+        .card-container.centered {
+            justify-content: center;
+            gap: 0; /* Убираем пробелы между картами */
+        }
+
+        .card-container.centered .card {
+            width: 30%; /* Увеличиваем ширину выбранных карт */
+            padding-bottom: 45%; /* Соотношение сторон для выбранных карт */
+            margin: 0 5px; /* Небольшой отступ между картами */
+        }
     </style>
 </head>
 <body>
@@ -206,11 +218,15 @@
                         });
 
                         // Центрируем выбранные карты
-                        cardContainer.style.justifyContent = 'center';
-                        cardContainer.style.gap = '0'; // Убираем пробелы между картами
+                        cardContainer.classList.add('centered');
 
                         // Отправка данных в Telegram
                         tg.sendData(JSON.stringify({ cards: selectedCards }));
+
+                        // Закрываем веб-приложение через 2 секунды
+                        setTimeout(() => {
+                            tg.close();
+                        }, 2000);
                     }
                 }
             });
