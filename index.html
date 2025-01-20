@@ -5,231 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор карт Таро</title>
     <style>
-        /* Основные стили */
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #fff;
         }
-
-        h1 {
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 10px;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        p {
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            font-size: 16px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            width: 100%;
-            max-width: 600px;
-            padding: 10px;
-            box-sizing: border-box;
-            transition: all 0.5s ease;
-        }
-
-        .card {
-            width: 22%; /* Карты занимают 22% ширины контейнера */
-            height: 0;
-            padding-bottom: 33%; /* Соотношение сторон 2:3 (ширина:высота) */
-            perspective: 1000px;
-            cursor: pointer;
-            transition: opacity 0.5s, transform 0.5s;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .card.hidden {
-            opacity: 0;
-            transform: scale(0);
-            pointer-events: none;
-        }
-
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-        }
-
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-front, .card-back {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
+        .container {
+            background: white;
+            padding: 20px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-size: cover;
-            background-position: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-
-        .card-front {
-            background-color: #fff;
+        .card {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
             border: 1px solid #ccc;
-            transform: rotateY(180deg);
+            border-radius: 5px;
+            cursor: pointer;
         }
-
-        .card-back {
-            background-image: url('card-back.jpg');
-            background-size: cover;
+        .card.selected {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
         }
-
-        /* Адаптация для мобильных устройств */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 20px;
-            }
-
-            p {
-                font-size: 14px;
-            }
-
-            .card {
-                width: 30%; /* На маленьких экранах карты занимают 30% ширины */
-                padding-bottom: 45%; /* Соотношение сторон для мобильных */
-            }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-
-        /* Адаптация для Telegram WebApp */
-        @media (max-height: 600px) {
-            body {
-                min-height: 90vh; /* Уменьшаем высоту для Telegram WebApp */
-            }
-
-            .card {
-                width: 25%; /* Карты занимают 25% ширины */
-                padding-bottom: 37.5%; /* Соотношение сторон для Telegram */
-            }
-        }
-
-        /* Стили для выбранных карт */
-        .card-container.centered {
-            justify-content: center;
-            gap: 0; /* Убираем пробелы между картами */
-        }
-
-        .card-container.centered .card {
-            width: 30%; /* Увеличиваем ширину выбранных карт */
-            padding-bottom: 45%; /* Соотношение сторон для выбранных карт */
-            margin: 0 5px; /* Небольшой отступ между картами */
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <h1>Таролог | Расклады Таро</h1>
-    <p>Выберите 3 карты</p>
-    <div class="card-container" id="cardContainer">
-        <div class="card" data-card-name="Карта 1">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card1.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
+    <div class="container">
+        <h1>Выберите карты Таро</h1>
+        <div id="cards">
+            <div class="card" data-card="Влюбленные">Влюбленные</div>
+            <div class="card" data-card="Справедливость">Справедливость</div>
+            <div class="card" data-card="6 мечей">6 мечей</div>
+            <div class="card" data-card="Шут">Шут</div>
+            <div class="card" data-card="Маг">Маг</div>
+            <div class="card" data-card="Императрица">Императрица</div>
         </div>
-        <div class="card" data-card-name="Карта 2">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card2.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 3">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card3.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 4">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card4.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 5">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card5.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 6">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card6.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
-        <div class="card" data-card-name="Карта 7">
-            <div class="card-inner">
-                <div class="card-front" style="background-image: url('card7.jpg');"></div>
-                <div class="card-back"></div>
-            </div>
-        </div>
+        <button id="submit" disabled>Отправить</button>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const tg = window.Telegram.WebApp;
-
-        tg.ready();
-        tg.expand();
-
+        const cards = document.querySelectorAll('.card');
+        const submitButton = document.getElementById('submit');
         const selectedCards = [];
-        const cardContainer = document.getElementById('cardContainer');
 
-        document.querySelectorAll('.card').forEach(card => {
+        cards.forEach(card => {
             card.addEventListener('click', () => {
-                if (!card.classList.contains('flipped') && selectedCards.length < 3) {
-                    card.classList.add('flipped');
-                    selectedCards.push(card.dataset.cardName);
-
-                    if (selectedCards.length === 3) {
-                        // Скрываем невыбранные карты
-                        document.querySelectorAll('.card').forEach(otherCard => {
-                            if (!otherCard.classList.contains('flipped')) {
-                                otherCard.classList.add('hidden');
-                            }
-                        });
-
-                        // Центрируем выбранные карты
-                        cardContainer.classList.add('centered');
-
-                        // Отправка данных в Telegram
-                        tg.sendData(JSON.stringify({ cards: selectedCards }));
-
-                        // Закрываем веб-приложение через 2 секунды
-                        setTimeout(() => {
-                            tg.close();
-                        }, 2000);
-                    }
+                card.classList.toggle('selected');
+                const cardName = card.getAttribute('data-card');
+                if (selectedCards.includes(cardName)) {
+                    selectedCards.splice(selectedCards.indexOf(cardName), 1);
+                } else {
+                    selectedCards.push(cardName);
                 }
+                submitButton.disabled = selectedCards.length === 0;
             });
+        });
+
+        submitButton.addEventListener('click', () => {
+            if (selectedCards.length > 0) {
+                Telegram.WebApp.sendData(selectedCards.join(','));
+            }
         });
     </script>
 </body>
