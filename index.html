@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор карт Таро</title>
+    <link rel="manifest" href="/manifest.json">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,7 +18,7 @@
             margin: 0;
         }
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -24,14 +27,40 @@
         .card {
             display: inline-block;
             margin: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            width: 100px;
+            height: 150px;
+            background-image: url('card-back.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #ccc;
+            border-radius: 10px;
             cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
         .card.selected {
-            background-color: #d1e7dd;
-            border-color: #badbcc;
+            border-color: #007bff;
+            transform: scale(1.1);
+        }
+        .card[data-card="1"] {
+            background-image: url('card1.jpg');
+        }
+        .card[data-card="2"] {
+            background-image: url('card2.jpg');
+        }
+        .card[data-card="3"] {
+            background-image: url('card3.jpg');
+        }
+        .card[data-card="4"] {
+            background-image: url('card4.jpg');
+        }
+        .card[data-card="5"] {
+            background-image: url('card5.jpg');
+        }
+        .card[data-card="6"] {
+            background-image: url('card6.jpg');
+        }
+        .card[data-card="7"] {
+            background-image: url('card7.jpg');
         }
         button {
             margin-top: 20px;
@@ -52,12 +81,13 @@
     <div class="container">
         <h1>Выберите карты Таро</h1>
         <div id="cards">
-            <div class="card" data-card="Влюбленные">Влюбленные</div>
-            <div class="card" data-card="Справедливость">Справедливость</div>
-            <div class="card" data-card="6 мечей">6 мечей</div>
-            <div class="card" data-card="Шут">Шут</div>
-            <div class="card" data-card="Маг">Маг</div>
-            <div class="card" data-card="Императрица">Императрица</div>
+            <div class="card" data-card="1"></div>
+            <div class="card" data-card="2"></div>
+            <div class="card" data-card="3"></div>
+            <div class="card" data-card="4"></div>
+            <div class="card" data-card="5"></div>
+            <div class="card" data-card="6"></div>
+            <div class="card" data-card="7"></div>
         </div>
         <button id="submit" disabled>Отправить</button>
     </div>
