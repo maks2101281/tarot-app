@@ -143,11 +143,12 @@
                     // Обновляем отображение выбранных карт
                     updateSelectedCards();
 
-                    // Если выбрано 3 карты, скрываем остальные
+                    // Если выбрано 3 карты, скрываем остальные и закрываем приложение
                     if (selectedCards.length === 3) {
                         hideUnselectedCards();
-                        // Отправляем данные в Telegram
+                        // Отправляем данные в Telegram и закрываем приложение
                         Telegram.WebApp.sendData(selectedCards.join(','));
+                        Telegram.WebApp.close(); // Закрываем веб-приложение
                     }
                 }
             });
