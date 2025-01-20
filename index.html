@@ -162,12 +162,14 @@
                     const cardName = card.getAttribute('data-card');
                     selectedCards.add(cardName); // Добавляем карту в Set
 
-                    // Обновляем отображение выбранных карт
-                    updateSelectedCards();
+                    // Перемещаем выбранную карту в контейнер выбранных карт
+                    selectedCardsContainer.appendChild(card.cloneNode(true));
+
+                    // Скрываем выбранную карту в основном списке
+                    card.style.display = 'none';
 
                     // Если выбрано 3 карты, закрываем приложение
                     if (selectedCards.size === 3) {
-                        hideUnselectedCards();
                         // Отправляем данные в Telegram и закрываем приложение
                         if (window.Telegram && Telegram.WebApp) {
                             Telegram.WebApp.sendData(Array.from(selectedCards).join(',')); // Преобразуем Set в массив
@@ -179,26 +181,6 @@
                 }
             });
         });
-
-        // Обновление отображения выбранных карт
-        function updateSelectedCards() {
-            selectedCardsContainer.innerHTML = ''; // Очищаем контейнер
-            selectedCards.forEach(cardName => {
-                const cardElement = document.createElement('div');
-                cardElement.className = 'card selected';
-                cardElement.style.backgroundImage = `url('card${cardName}.jpg')`;
-                selectedCardsContainer.appendChild(cardElement);
-            });
-        }
-
-        // Скрытие невыбранных карт
-        function hideUnselectedCards() {
-            cards.forEach(card => {
-                if (!card.classList.contains('selected')) {
-                    card.style.display = 'none';
-                }
-            });
-        }
     </script>
 </body>
 </html>
